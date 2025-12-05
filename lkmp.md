@@ -69,6 +69,7 @@ https://opensource.com/article/21/5/alpine-linux-email
 1. Clone the Linux kernel source (recommended main branch):
    ```bash
    git clone https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+   ```
 2. Configure and build the kernel as per the configuration
 	- can be for x86
 	- can be cross compiled for the actual target (ex : arm)
@@ -155,6 +156,7 @@ ALSA is structured into several layers. On embedded systems and SoCs, the ASoC (
 					|
 		SoC/Board Audio Hardware
 		```
+  	- This is just an very high level overview, there is a lot inside the ALSA.
 - References
 	- <linux_repo>/Documentation/sound/
 	- https://www.alsa-project.org/wiki/Main_Page
@@ -189,8 +191,9 @@ include device context and become traceable to specific hardware
 instances.Improve log clarity, make messages filterable by device
 and align the driver with kernel logging conventions to aid
 debugging and maintenance.
-
-- https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git/commit/?id=6ef8e042cdcaabe3e3c68592ba8bfbaee2fa10a3
+```
+- https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=6ef8e042cdcaabe3e3c68592ba8bfbaee2fa10a3
+```
 
 #### **ASoC: soc-core: check ops & auto_selectable_formats in snd_soc_dai_get_fmt() to prevent dereference error**
 Smatch reported an issue that "ops" could be null (see
@@ -199,31 +202,33 @@ the dai fmts, also auto_selectable_formats can also be
 null.
 Add a proper null check before accessing both the ptrs
 to ensure a safe execution.
-
-- https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git/commit/?id=e73b743bfe8a6ff4e05b5657d3f7586a17ac3ba0
+```
+- https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=e73b743bfe8a6ff4e05b5657d3f7586a17ac3ba0
+```
 
 #### **ASoC: tas2781: Replace deprecated strcpy() with strscpy()**
 strcpy() is deprecated,use strscpy() instead.
-No functional changes intended.
-
 Link: https://github.com/KSPP/linux/issues/88
-
-- https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git/commit/?id=3b071bdd26849172101081573a18022af108fb21
+```
+- https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=3b071bdd26849172101081573a18022af108fb21
+```
 
 #### **ASoC: SOF: sof-client-probes: Replace snprintf() with scnprintf()**
 As per the C99 standard snprintf() returns the length of the data
 that *would have been* written if there were enough space for it.
 It's generally considered safer to use the scnprintf() variant.
-
-- https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git/commit/?id=e45979641a9a9dbb48fc77c5b36a5091a92e7227
+```
+- https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=e45979641a9a9dbb48fc77c5b36a5091a92e7227
+```
 
 #### **ASoC: Intel: avs: Replace snprintf() with scnprintf()**
 snprintf() as defined by the C99 standard,returns the
 number of characters that *would have been* written if
 enough space were available.Use scnprintf() that returns
 the actual number of characters written.
-
-- https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git/commit/?id=df919994d323c7c86e32fa2745730136d58ada12
+```
+- https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=df919994d323c7c86e32fa2745730136d58ada12
+```
 
 #### **ALSA: ac97: Fix kernel-doc warning for snd_ac97_reset**
 kernel-doc populated the below warning for the non
@@ -231,11 +236,29 @@ static function "snd_ac97_reset".
 "Warning: ./sound/ac97_bus.c:56 No description found
 for return value of 'snd_ac97_reset'".
 Added the return values as per the kernel-doc format.
-
+```
 - https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=ab3bd3662ed4605b7859988f224e2ed615f03060
+```
 
-### 📤 Pending Patches
+#### **ALSA: rawmidi: Fix inconsistent indenting warning reported by smatch**
+Fix smatch reported inconsistent indenting warning in rawmidi.
+sound/core/rawmidi.c:2115 alsa_rawmidi_init() warn: inconsistent
+indenting.
+```
+- https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=ef5e0a02d842b2c6dfcfd9b80feb185769b892ef
+```
+
+### 📤 Patches Under Review
 The below patches were submitted for the review and waiting for the review.
+
+#### **ALSA: usb-audio: Initialize status1 to fix uninitialized symbol errors**
+Initialize 'status1' with a default value to resolve the static analysis
+smatch reported error "uninitialized symbol 'status1'".
+The 'status1' variable is used to create a buff using "kmemdup".
+So, ensure to initialize the value before it is read.
+```
+- https://lore.kernel.org/all/20251204052201.16286-3-hariconscious@gmail.com/
+```
 
 #### **ASoC: codec: rt274: Use devm_request_threaded_irq to manage IRQ lifetime and fix smatch warning**
 This patch replaces the manual management of IRQ with the device
@@ -249,14 +272,15 @@ Please report any failures or unexpected behaviour, I will support in
 updating the patch accordingly.
 
 Similar warning is present in the codecs rt286 & rt298.
-
+```
 - https://lore.kernel.org/all/20251121140940.40678-4-hariconscious@gmail.com/
+```
 
 #### **ASoC: fsl: fsl_ssi: Replace deprecated strcpy() with strscpy()**
 strcpy() is deprecated,use strscpy() instead.
-No functional changes intended.
-
+```
 - https://lore.kernel.org/all/29c40b5a-3e4d-e89d-ca22-a1059cca3480@gmail.com/
+```
 
 #### **sound/soc/sof:Use kmalloc_array instead of kmalloc**
 Documentation/process/deprecated.rst recommends to avoid the use of
@@ -265,8 +289,9 @@ overflowing. This could lead to values wrapping around and a
 smaller allocation being made than the caller was expecting.
 
 Replace kmalloc() with kmalloc_array()
-
+```
 - https://lore.kernel.org/all/20250923142513.11005-1-hariconscious@gmail.com/
+```
 
 ### 🔧 Patches under work in progress
 The below patches are under work in progress where maintainer suggestions are incorporating.
@@ -283,8 +308,9 @@ Fix this by requesting the initialized memory using the gfp flag
 appended with the option "__GFP_ZERO".
 
 https://syzkaller.appspot.com/bug?extid=9a4fbb77c9d4aacd3388
-
+```
 - https://lore.kernel.org/all/20250919180601.76152-1-hariconscious@gmail.com/
+```
 
 ### ❌ Backfired patches
 The below patches are backfired because of insufficient analysis, where underlying issues are misunderstood or overlooked during debugging. A thorough and methodical investigation is essential to ensure that patches address the real problem.
@@ -292,8 +318,9 @@ The below patches are backfired because of insufficient analysis, where underlyi
 data race in both the functions, snd_seq_fifo_cell_out &
 snd_seq_fifo_poll_wait is protected with guards
 https://syzkaller.appspot.com/bug?extid=c3dbc239259940ededba
-
+```
 - https://lore.kernel.org/all/20250916104547.27599-2-hariconscious@gmail.com/
+```
 
 #### **ALSA: timer: Fix null dereference of 'timer->card' reported by smatch**
 Fix null dereference in snd_timer_proc_read().
@@ -303,8 +330,9 @@ at line 1226, but later accessed without a check.
 This could lead to a null pointer dereference under certain conditions.
 
 Add a null check before accessing to ensure safe execution.
-
+```
 - https://lore.kernel.org/all/20251103114902.11423-2-hariconscious@gmail.com/
+```
 
 ---
 
@@ -318,3 +346,4 @@ Add a null check before accessing to ensure safe execution.
 
 ## 🙌 Acknowledgements
 Special thanks to the Mentors (**Shuah Khan & David Hunter**), Linux Foundation, kernel maintainers and the open-source community for supporting new contributors through mentorship and guidance.
+
